@@ -2,18 +2,39 @@ module Prompts
 
 
 const PROMPT = Ref("")
-const EOR = "::end::"
+const EOR = "~~end~~"
+const BOR = "~~start~~"
+
+function codegen()
+  return """
+    \n
+    THIS IS IMPORTANT: Respond only with code in the requested language! To add any other information, use code comments.
+    If you don't know the answer or the request makes no sense, leave the code block empty and add a comment with your error message.
+    Your response should be a valid code snippet in the requested language. It will be parsed as such so make sure it's valid code.
+    \n
+  """
+end
 
 
 function system(lang = "Julia"; fn = true, fname::Union{Nothing, String} = nothing, dc = fn)
   prompt = """
+    \n
     You are an expert $lang developer and generate high quality $lang code.
+    You always answer with JSON in the requested format.
+    Send only JSON code, as requested, never anything else!
+
     You answer only with JSON, in the following format: "
     {"r":{"c":"<response>","e":"<error>"}}
     ".
+
+    At the beginning of your response, add the following string: $BOR.
     At the end of your response, add the following string: $EOR.
+
     If you don't know the answer, leave `c` empty and set `e` to your error message.
     Escape single quotes with backslash in your response.
+
+    Never ever answer with anything else but the JSON response. If you do, your response will be rejected.
+    \n
   """
 
   fn && (prompt *= """
@@ -39,9 +60,11 @@ function system(lang = "Julia"; fn = true, fname::Union{Nothing, String} = nothi
   end
 
   lowercase(lang) == "julia" && (prompt *= """
+    \n
     Use as much as possible Julia's built-in functions and libraries and the most popular packages.
     Use the most popular style guide and best practices and idiomatic Julia code.
     Add type annotations to function arguments and return values.
+    \n
   """)
 
   lowercase(lang) == "html" && (prompt *= """

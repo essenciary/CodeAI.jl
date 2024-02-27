@@ -1,7 +1,7 @@
 name = "CodeAI"
 uuid = "44782c38-800c-4890-a4ed-78e5222261bd"
 authors = ["Adrian Salceanu <adrian.salceanu@gmail.com> and contributors"]
-version = "1.2"
+version = "1.2.1"
 
 [deps]
 DotEnv = "4dc1fcf4-5e3b-5448-94ab-0c38ec0385c1"
